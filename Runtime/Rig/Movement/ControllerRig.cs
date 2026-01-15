@@ -36,7 +36,7 @@ namespace KadenZombie8.BIMOS.Rig
             #endregion
 
             ScaleCharacter();
-            StartCoroutine(WaitForMotionControls());
+            //StartCoroutine(WaitForMotionControls());
         }
 
         private IEnumerator WaitForMotionControls()

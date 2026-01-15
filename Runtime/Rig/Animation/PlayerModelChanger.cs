@@ -1,26 +1,33 @@
 using System.Collections.Generic;
+using KadenZombie8.BIMOS.Rig;
+using UnityEditor;
 using UnityEngine;
 
-namespace KadenZombie8.BIMOS.Rig {
+namespace KadenZombie8.BIMOS.Editor
+{
     [ExecuteInEditMode]
     [RequireComponent(typeof(BIMOSRig))]
-    public class PlayerModelChanger : MonoBehaviour {
+    public class PlayerModelChanger : MonoBehaviour
+    {
         [SerializeField]
         private GameObject _characterModel;
 
         private BIMOSRig _player;
 
-        public void ChangePlayerModel() {
+        public void ChangePlayerModel()
+        {
             _player = GetComponent<BIMOSRig>();
 
             Animator animator = _characterModel.GetComponent<Animator>();
 
-            if (!animator.avatar) {
+            if (!animator.avatar)
+            {
                 Debug.LogError("Character model must have an avatar");
                 return;
             }
 
-            if (!animator.avatar.isHuman) {
+            if (!animator.avatar.isHuman)
+            {
                 Debug.LogError("Character model's avatar must be humanoid");
                 return;
             }
@@ -49,6 +56,32 @@ namespace KadenZombie8.BIMOS.Rig {
                 renderer.updateWhenOffscreen = true;
 
             DestroyImmediate(characterModel);
+        }
+    }
+
+    [CustomEditor(typeof(PlayerModelChanger))]
+    class PlayerModelChangerEditor : UnityEditor.Editor
+    {
+        private PlayerModelChanger _target;
+        private SerializedProperty _characterModel;
+
+        private void OnEnable()
+        {
+            _characterModel = serializedObject.FindProperty("_characterModel");
+        }
+
+
+        public override void OnInspectorGUI()
+        {
+            serializedObject.Update();
+            _target = (PlayerModelChanger)target;
+            EditorGUILayout.PropertyField(_characterModel);
+
+            if (GUILayout.Button("Set Character Model"))
+                _target.ChangePlayerModel();
+
+            serializedObject.ApplyModifiedProperties();
+
         }
     }
 }
